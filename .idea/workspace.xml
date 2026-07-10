@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c12c565c-c163-42fb-aba0-1f974f5423c3" name="Changes" comment="" />
+    <list default="true" id="c12c565c-c163-42fb-aba0-1f974f5423c3" name="Changes" comment="hw 3">
+      <change beforePath="$PROJECT_DIR$/install_dev_tools.sh" beforeDir="false" afterPath="$PROJECT_DIR$/lesson-3/install_dev_tools.sh" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -14,33 +16,38 @@
     <execution />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="2" />
+    <option name="cachedIndexableFilesCount" value="4" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "roman-zubach"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;roman-zubach&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/roman-zubach/devops-hw.git",
-    "accountId": "0c9401d9-92d3-4cfc-9854-14bb0d189cf7"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/roman-zubach/devops-hw.git&quot;,
+    &quot;accountId&quot;: &quot;0c9401d9-92d3-4cfc-9854-14bb0d189cf7&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 8.4" />
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6,
-  "fromUser": false
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3GK2JttWj2UiYmaRCA0isUDJR95" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -55,7 +62,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "lesson-3",
+    "git-widget-placeholder": "lesson-4",
     "last_opened_file_path": "/Users/macbook/Sites/education/devops-hw",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -68,6 +75,9 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lesson-3" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -85,7 +95,17 @@
       <option name="presentableId" value="Default" />
       <updated>1783705872079</updated>
       <workItem from="1783705873101" duration="1476000" />
+      <workItem from="1783707363599" duration="901000" />
     </task>
+    <task id="LOCAL-00001" summary="hw 3">
+      <option name="closed" value="true" />
+      <created>1783707378742</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1783707378742</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -101,5 +121,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="hw 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="hw 3" />
   </component>
 </project>
