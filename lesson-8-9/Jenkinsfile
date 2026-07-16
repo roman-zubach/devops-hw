@@ -1,0 +1,104 @@
+pipeline {
+  agent {
+    kubernetes {
+      yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  serviceAccountName: jenkins-agent
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:v1.23.2-debug
+      imagePullPolicy: IfNotPresent
+      command: ["/busybox/cat"]
+      tty: true
+    - name: aws
+      image: amazon/aws-cli:2.17.0
+      command: ["sleep", "infinity"]
+      tty: true
+    - name: git
+      image: alpine/git:2.45.2
+      command: ["sleep", "infinity"]
+      tty: true
+'''
+      defaultContainer 'kaniko'
+    }
+  }
+
+  environment {
+    AWS_REGION     = 'us-west-2'
+    ECR_REPOSITORY = 'lesson-8-9-django'
+    BUILD_CONTEXT  = 'lesson-8-9'
+    VALUES_FILE    = 'lesson-8-9/charts/django-app/values.yaml'
+    CONFIG_REPO    = 'https://github.com/roman-zubach/devops-hw.git'
+    CONFIG_BRANCH  = 'main'
+  }
+
+  stages {
+    stage('Resolve ECR & tag') {
+      steps {
+        container('aws') {
+          script {
+            def account = sh(script: 'aws sts get-caller-identity --query Account --output text', returnStdout: true).trim()
+            env.REGISTRY  = "${account}.dkr.ecr.${env.AWS_REGION}.amazonaws.com"
+            env.IMAGE_TAG = "${env.BUILD_NUMBER}-${env.GIT_COMMIT?.take(7) ?: 'manual'}"
+            env.IMAGE     = "${env.REGISTRY}/${env.ECR_REPOSITORY}:${env.IMAGE_TAG}"
+            echo "Building image: ${env.IMAGE}"
+          }
+        }
+      }
+    }
+
+    stage('Build & push (Kaniko)') {
+      steps {
+        container('kaniko') {
+          sh '''
+            /kaniko/executor \
+              --context=dir://${WORKSPACE}/${BUILD_CONTEXT} \
+              --dockerfile=${WORKSPACE}/${BUILD_CONTEXT}/Dockerfile \
+              --destination=${IMAGE} \
+              --destination=${REGISTRY}/${ECR_REPOSITORY}:latest \
+              --cache=true
+          '''
+        }
+      }
+    }
+
+    stage('Update Helm values & push') {
+      steps {
+        container('git') {
+          withCredentials([usernamePassword(
+            credentialsId: 'github-credentials',
+            usernameVariable: 'GIT_USER',
+            passwordVariable: 'GIT_TOKEN'
+          )]) {
+            sh '''
+              set -e
+              rm -rf config-repo
+              git clone --branch ${CONFIG_BRANCH} \
+                https://${GIT_USER}:${GIT_TOKEN}@github.com/roman-zubach/devops-hw.git config-repo
+              cd config-repo
+
+              sed -i "s|^  tag:.*|  tag: \\"${IMAGE_TAG}\\"|" ${VALUES_FILE}
+
+              git config user.email "jenkins@ci.local"
+              git config user.name "jenkins-ci"
+              git add ${VALUES_FILE}
+              git commit -m "ci: bump django-app image tag to ${IMAGE_TAG}" || echo "No changes to commit"
+              git push origin ${CONFIG_BRANCH}
+            '''
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "Готово. Argo CD синхронізує застосунок із тегом ${env.IMAGE_TAG}."
+    }
+    failure {
+      echo 'Pipeline впав — перевірте логи стадій.'
+    }
+  }
+}
