@@ -64,6 +64,27 @@ output "jenkins_agent_role_arn" {
   value       = module.jenkins.agent_role_arn
 }
 
+# --- RDS ---
+output "rds_endpoint" {
+  description = "Endpoint БД (writer)"
+  value       = module.rds.endpoint
+}
+
+output "rds_port" {
+  description = "Порт підключення до БД"
+  value       = module.rds.port
+}
+
+output "rds_security_group_id" {
+  description = "ID Security Group БД"
+  value       = module.rds.security_group_id
+}
+
+output "rds_is_aurora" {
+  description = "Чи розгорнуто Aurora"
+  value       = module.rds.is_aurora
+}
+
 # --- Argo CD ---
 output "argocd_namespace" {
   description = "Namespace Argo CD"

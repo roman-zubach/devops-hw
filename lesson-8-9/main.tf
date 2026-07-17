@@ -65,6 +65,36 @@ module "jenkins" {
   depends_on = [module.eks]
 }
 
+module "rds" {
+  source = "./modules/rds"
+
+  name       = "lesson-8-9"
+  use_aurora = false
+
+  engine         = "postgres"
+  engine_version = "16.4"
+  instance_class = "db.t3.micro"
+  multi_az       = false
+
+  db_name  = "appdb"
+  username = "dbadmin"
+  password = var.db_password
+  port     = 5432
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  allowed_cidr_blocks        = ["10.0.0.0/16"]
+  allowed_security_group_ids = [module.eks.cluster_security_group_id]
+
+  db_parameter_group_family = "postgres16"
+
+  tags = {
+    Environment = "lesson-8-9"
+    Project     = "django-app"
+  }
+}
+
 module "argo_cd" {
   source = "./modules/argo_cd"
 

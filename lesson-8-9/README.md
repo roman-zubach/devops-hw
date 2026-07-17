@@ -25,6 +25,7 @@ lesson-8-9/
 │   ├── vpc/                  # VPC, підмережі, IGW/NAT, теги для EKS/ELB
 │   ├── ecr/                  # ECR-репозиторій для образу Django
 │   ├── eks/                  # EKS-кластер, node group, IAM, addons
+│   ├── rds/                  # Універсальний RDS/Aurora (use_aurora) + SG/subnet/parameter group
 │   ├── jenkins/              # Helm-реліз Jenkins + IRSA для Kaniko-агента
 │   │   ├── jenkins.tf        # namespace, IAM (IRSA), SA, helm_release
 │   │   ├── values.yaml       # JCasC seed-джоба, плагіни, kubernetes-агент
@@ -210,6 +211,114 @@ Balancer'ів.
 Application вказує на `lesson-8-9/charts/django-app` у Git. Коли Jenkins оновлює
 `image.tag` у `values.yaml` та пушить у `main`, Argo CD підхоплює коміт і
 розгортає новий образ.
+
+### rds
+
+Універсальний модуль, який на основі змінної `use_aurora` підіймає **Aurora
+Cluster** (`aws_rds_cluster` + `aws_rds_cluster_instance`, writer/reader) або
+одну звичайну **RDS-інстанс** (`aws_db_instance` з опційним Multi-AZ). В обох
+випадках автоматично створює `aws_db_subnet_group`, `aws_security_group` (доступ
+до порту БД з дозволених CIDR/SG) та Parameter Group із базовими параметрами
+(`max_connections`, `log_statement`, `work_mem`) — `aws_db_parameter_group` для
+звичайної RDS або `aws_rds_cluster_parameter_group` для Aurora. Рушій, версія,
+клас інстансу та відмовостійкість задаються через змінні.
+
+| `use_aurora` | Що створюється |
+|--------------|----------------|
+| `true`  | `aws_rds_cluster` + `aws_rds_cluster_instance` (перший — writer, решта — reader) |
+| `false` | одна `aws_db_instance` (з опційним Multi-AZ) |
+
+#### Приклад використання
+
+Звичайна PostgreSQL RDS:
+
+```hcl
+module "rds" {
+  source = "./modules/rds"
+
+  name       = "lesson-8-9"
+  use_aurora = false
+
+  engine         = "postgres"
+  engine_version = "16.4"
+  instance_class = "db.t3.micro"
+  multi_az       = false
+
+  db_name  = "appdb"
+  username = "dbadmin"
+  password = var.db_password
+  port     = 5432
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  allowed_cidr_blocks        = ["10.0.0.0/16"]
+  allowed_security_group_ids = [module.eks.cluster_security_group_id]
+
+  db_parameter_group_family = "postgres16"
+
+  tags = { Environment = "lesson-8-9", Project = "django-app" }
+}
+```
+
+Aurora PostgreSQL Cluster — той самий блок із:
+
+```hcl
+  use_aurora            = true
+  engine                = "aurora-postgresql"
+  aurora_instance_count = 2 # 1 writer + 1 reader
+
+  aurora_cluster_parameter_group_family = "aurora-postgresql16"
+```
+
+#### Змінні
+
+| Змінна | Тип | Дефолт | Опис |
+|--------|-----|--------|------|
+| `name` | `string` | — | Базовий префікс для імен ресурсів |
+| `use_aurora` | `bool` | `false` | `true` → Aurora Cluster, `false` → звичайна RDS |
+| `engine` | `string` | `"postgres"` | `postgres`/`mysql`/`mariadb` або `aurora-postgresql`/`aurora-mysql` |
+| `engine_version` | `string` | `"16.4"` | Версія рушія |
+| `instance_class` | `string` | `"db.t3.micro"` | Клас інстансу БД |
+| `multi_az` | `bool` | `false` | Multi-AZ для звичайної RDS |
+| `allocated_storage` | `number` | `20` | Розмір сховища (ГБ), тільки для звичайної RDS |
+| `storage_type` | `string` | `"gp3"` | Тип сховища (`gp2`/`gp3`/`io1`) |
+| `aurora_instance_count` | `number` | `1` | Кількість інстансів у Aurora-кластері |
+| `db_name` | `string` | `"appdb"` | Ім'я початкової БД |
+| `username` | `string` | `"dbadmin"` | Master-користувач |
+| `password` | `string` (sensitive) | — | Пароль master-користувача |
+| `port` | `number` | `5432` | Порт БД (5432 postgres / 3306 mysql) |
+| `vpc_id` | `string` | — | ID VPC |
+| `subnet_ids` | `list(string)` | — | Підмережі для DB Subnet Group |
+| `allowed_cidr_blocks` | `list(string)` | `[]` | CIDR-блоки з доступом до порту БД |
+| `allowed_security_group_ids` | `list(string)` | `[]` | SG з доступом до порту БД |
+| `publicly_accessible` | `bool` | `false` | Публічна адреса БД |
+| `db_parameter_group_family` | `string` | `"postgres16"` | Family для звичайної RDS |
+| `aurora_cluster_parameter_group_family` | `string` | `"aurora-postgresql16"` | Family для Aurora |
+| `parameters` | `list(object)` | `max_connections`, `log_statement`, `work_mem` | Параметри Parameter Group |
+| `backup_retention_period` | `number` | `7` | Днів зберігання бекапів |
+| `skip_final_snapshot` | `bool` | `true` | Пропустити фінальний snapshot |
+| `storage_encrypted` | `bool` | `true` | Шифрування сховища |
+| `tags` | `map(string)` | `{}` | Теги для всіх ресурсів |
+
+Виводи: `endpoint`, `reader_endpoint` (тільки Aurora), `port`, `db_name`,
+`username`, `security_group_id`, `db_subnet_group_name`, `parameter_group_name`,
+`is_aurora`.
+
+#### Як змінити тип БД / engine / клас інстансу
+
+- **Aurora ↔ звичайна RDS** — змініть `use_aurora` (`true`/`false`), решта логіки
+  перемикається автоматично.
+- **MySQL замість PostgreSQL** — `engine = "mysql"` (або `"aurora-mysql"`),
+  `engine_version = "8.0"`, `port = 3306`, `db_parameter_group_family = "mysql8.0"`
+  (для Aurora — `aurora_cluster_parameter_group_family = "aurora-mysql8.0"`).
+- **Версія** — оновіть `engine_version` і відповідний `*_family` (family прив'язаний
+  до major-версії, напр. `postgres16` / `postgres15`).
+- **Клас інстансу** — `instance_class` (напр. `db.t3.large`, `db.r6g.large`).
+- **Відмовостійкість** — для звичайної RDS `multi_az = true`; для Aurora збільшіть
+  `aurora_instance_count`.
+- **Параметри БД** — передайте власний список `parameters`; для статичних параметрів
+  (напр. `max_connections`) вкажіть `apply_method = "pending-reboot"`.
 
 ## CI/CD-конвеєр (Jenkins → ECR → Argo CD)
 
