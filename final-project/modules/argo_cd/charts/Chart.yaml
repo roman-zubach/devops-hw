@@ -1,0 +1,6 @@
+apiVersion: v2
+name: argocd-apps
+description: App-of-apps чарт, що створює Argo CD Application та Repository для django-app
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

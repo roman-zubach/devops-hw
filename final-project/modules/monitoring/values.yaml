@@ -1,0 +1,60 @@
+# --- Grafana ---
+grafana:
+  enabled: true
+  # Фіксоване ім'я сервісу, щоб працював `kubectl port-forward svc/grafana 3000:80`
+  fullnameOverride: grafana
+  adminPassword: "${grafana_password}"
+  service:
+    type: ClusterIP
+    port: 80
+  persistence:
+    enabled: true
+    storageClassName: ${storage_class}
+    size: ${grafana_size}
+  # Кластерні дашборди Kubernetes встановлюються автоматично
+  defaultDashboardsEnabled: true
+
+# --- Prometheus ---
+prometheus:
+  prometheusSpec:
+    retention: ${prometheus_retain}
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        memory: 1Gi
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ${storage_class}
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${prometheus_size}
+
+# --- Alertmanager (ефемерне сховище, щоб не займати EBS) ---
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+
+# --- node-exporter та kube-state-metrics ---
+nodeExporter:
+  enabled: true
+kubeStateMetrics:
+  enabled: true
+
+# Компоненти control plane на EKS керуються AWS і не скрейпляться —
+# вимикаємо, щоб не було хибних «target down».
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false

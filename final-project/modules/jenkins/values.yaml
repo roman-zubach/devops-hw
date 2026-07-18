@@ -1,0 +1,53 @@
+controller:
+  adminUser: "${admin_user}"
+  adminPassword: "${admin_password}"
+
+  serviceType: ClusterIP
+
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2000m"
+      memory: "2Gi"
+
+  installPlugins:
+    - kubernetes:4304.v5b_e5f2e4c9e5
+    - workflow-aggregator:608.v67378e9d3db_1
+    - git:5.7.0
+    - configuration-as-code:1932.v75cb_b_f1b_698d
+    - job-dsl:1.90
+
+  JCasC:
+    defaultConfig: true
+    configScripts:
+      seed-job: |
+        jobs:
+          - script: >
+              pipelineJob('django-app-ci') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote { url('${job_repo_url}') }
+                        branches('${job_repo_branch}')
+                      }
+                    }
+                    scriptPath('${jenkinsfile_path}')
+                  }
+                }
+              }
+
+agent:
+  enabled: true
+  namespace: "${namespace}"
+  serviceAccount: "${agent_service_account}"
+
+serviceAccountAgent:
+  create: false
+  name: "${agent_service_account}"
+
+rbac:
+  create: true
+  readSecrets: true

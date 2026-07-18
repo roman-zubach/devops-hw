@@ -1,0 +1,27 @@
+argocdNamespace: argocd
+
+applications:
+  - name: django-app
+    project: default
+    imageRepository: ""
+    source:
+      repoURL: https://github.com/roman-zubach/devops-hw.git
+      path: final-project/charts/django-app
+      targetRevision: main
+      valueFiles:
+        - values.yaml
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: default
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true
+      syncOptions:
+        - CreateNamespace=true
+        - ApplyOutOfSyncOnly=true
+
+repositories:
+  - name: django-app
+    url: https://github.com/roman-zubach/devops-hw.git
+    type: git
