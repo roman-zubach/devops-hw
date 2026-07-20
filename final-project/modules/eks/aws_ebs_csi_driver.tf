@@ -1,7 +1,3 @@
-# --- EBS CSI Driver (IRSA + EKS addon) ---
-# Драйвер потрібен, щоб PVC (наприклад, для Prometheus/Grafana) динамічно
-# створювали EBS-томи. Контролер драйвера автентифікується в AWS через IRSA.
-
 locals {
   oidc_provider_url = replace(aws_iam_openid_connect_provider.eks.url, "https://", "")
 }

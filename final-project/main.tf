@@ -4,8 +4,8 @@ locals {
 
 module "s3_backend" {
   source      = "./modules/s3-backend"
-  bucket_name = "terraform-state-bucket-001001"
-  table_name  = "terraform-locks"
+  bucket_name = "final-project-tfstate-001001"
+  table_name  = "final-project-tf-locks"
 }
 
 module "vpc" {
@@ -53,7 +53,7 @@ module "jenkins" {
   ecr_repository_arn = module.ecr.repository_arn
 
   admin_user      = "admin"
-  admin_password  = "admin123"
+  admin_password  = random_password.jenkins_admin.result
   job_repo_url    = "https://github.com/roman-zubach/devops-hw.git"
   job_repo_branch = "main"
 
@@ -110,7 +110,7 @@ module "monitoring" {
   source = "./modules/monitoring"
 
   namespace              = "monitoring"
-  grafana_admin_password = var.grafana_admin_password
+  grafana_admin_password = random_password.grafana_admin.result
 
   depends_on = [module.eks]
 }

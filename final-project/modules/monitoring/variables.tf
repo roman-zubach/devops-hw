@@ -23,9 +23,8 @@ variable "storage_class_name" {
 }
 
 variable "grafana_admin_password" {
-  description = "Пароль адміністратора Grafana"
+  description = "Пароль адміністратора Grafana (обов'язковий; root передає згенерований random_password)"
   type        = string
-  default     = "admin123"
   sensitive   = true
 }
 

@@ -17,10 +17,9 @@ variable "admin_user" {
 }
 
 variable "admin_password" {
-  description = "Пароль адміністратора Jenkins"
+  description = "Пароль адміністратора Jenkins (обов'язковий; root передає згенерований random_password)"
   type        = string
   sensitive   = true
-  default     = "admin123"
 }
 
 variable "cluster_name" {

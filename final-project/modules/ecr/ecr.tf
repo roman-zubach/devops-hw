@@ -12,13 +12,18 @@ resource "aws_ecr_repository" "this" {
   tags = var.tags
 }
 
+locals {
+  ecr_principal_arns = length(var.allowed_principal_arns) > 0 ? var.allowed_principal_arns : ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+}
+
 data "aws_iam_policy_document" "ecr" {
   statement {
+    sid    = "AllowPushPull"
     effect = "Allow"
 
     principals {
       type        = "AWS"
-      identifiers = [data.aws_caller_identity.current.arn]
+      identifiers = local.ecr_principal_arns
     }
 
     actions = [

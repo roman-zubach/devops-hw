@@ -74,10 +74,16 @@ final-project/
 ## Передумови
 
 - AWS CLI з налаштованими креденшелами, `kubectl`, `helm`, `terraform >= 1.5`.
-- Пароль БД передається через змінну середовища:
+- Єдиний секрет, який задає користувач, — master-пароль БД (передається через
+  змінну середовища, у git не зберігається):
   ```bash
   export TF_VAR_db_password='<надійний-пароль>'
-  # опційно: export TF_VAR_grafana_admin_password='<пароль-grafana>'
+  ```
+- Паролі Jenkins, Grafana та `DJANGO_SECRET_KEY` **генеруються автоматично**
+  (`random_password`) і читаються з виводів:
+  ```bash
+  terraform output -raw jenkins_admin_password
+  terraform output -raw grafana_admin_password
   ```
 
 ## 1. Бутстрап бекенду (перший запуск)
@@ -133,7 +139,7 @@ kubectl get pvc -n monitoring   # томи Prometheus/Grafana у статусі 
 ## 4. Доступ до сервісів (port-forward)
 
 ```bash
-# Jenkins
+# Jenkins  (логін admin, пароль: terraform output -raw jenkins_admin_password)
 kubectl -n jenkins port-forward svc/jenkins 8080:8080          # http://localhost:8080
 
 # Argo CD
@@ -141,8 +147,8 @@ kubectl -n argocd port-forward svc/argocd-server 8081:443      # https://localho
 kubectl -n argocd get secret argocd-initial-admin-secret \
   -o jsonpath='{.data.password}' | base64 -d                   # пароль admin
 
-# Grafana
-kubectl -n monitoring port-forward svc/grafana 3000:80         # http://localhost:3000  (admin / admin123)
+# Grafana  (логін admin, пароль: terraform output -raw grafana_admin_password)
+kubectl -n monitoring port-forward svc/grafana 3000:80         # http://localhost:3000
 
 # Prometheus
 kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
@@ -166,6 +172,24 @@ kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 909
 3. **Argo CD** (`Application` з `syncPolicy.automated` + prune + selfHeal) підхоплює
    коміт і розгортає новий образ у кластер.
 
+## Застосунок і база даних
+
+- Django працює на **gunicorn** (production WSGI), статика обслуговується
+  **WhiteNoise** (`collectstatic` на етапі збірки образу). Dev-сервер
+  `runserver` не використовується.
+- База даних — **PostgreSQL на RDS**. `config/settings.py` вмикає
+  `django.db.backends.postgresql`, якщо задано `POSTGRES_HOST` (у кластері —
+  завжди), інакше падає на SQLite лише для локального запуску.
+- **Секрети не зберігаються у git.** Конфіг подається через `envFrom`:
+  - статичні несекретні змінні (`DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`,
+    `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PORT`) — у ConfigMap чарта (`values.yaml`);
+  - динамічне й секретне (`POSTGRES_HOST` — реальний endpoint RDS,
+    `POSTGRES_PASSWORD` = `var.db_password`, `DJANGO_SECRET_KEY` — згенерований
+    `random_password`) — у Secret `django-app-secrets`, який створює Terraform.
+
+  Чарт лише посилається на Secret за іменем (`externalSecretName` у `values.yaml`),
+  тож у репозиторії немає жодного пароля.
+
 ## Моніторинг та автомасштабування
 
 - **Prometheus + Grafana** розгортаються чартом `kube-prometheus-stack` у namespace
@@ -187,6 +211,10 @@ kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 909
   IRSA-роль Kaniko-агента (лише пуш у конкретний ECR-репозиторій) та IRSA-роль
   контролера EBS CSI Driver. Kaniko та CSI-драйвер автентифікуються через OIDC
   без статичних ключів.
+- **Керування секретами** — жоден пароль не хардкодиться: master-пароль БД
+  задається через `TF_VAR_db_password`, а паролі Jenkins/Grafana і
+  `DJANGO_SECRET_KEY` генеруються `random_password`. Прикладні секрети живуть
+  у Kubernetes Secret (керованому Terraform), а не у git.
 - **Шифрування** — сховище RDS шифрується (`storage_encrypted`), стейт у S3 —
   `encrypt = true`, сканування образів у ECR при пуші.
 

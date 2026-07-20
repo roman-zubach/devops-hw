@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c12c565c-c163-42fb-aba0-1f974f5423c3" name="Changes" comment="hw 7">
-      <change beforePath="$PROJECT_DIR$/lesson-8-9/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/lesson-8-9/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lesson-8-9/main.tf" beforeDir="false" afterPath="$PROJECT_DIR$/lesson-8-9/main.tf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lesson-8-9/outputs.tf" beforeDir="false" afterPath="$PROJECT_DIR$/lesson-8-9/outputs.tf" afterDir="false" />
-    </list>
+    <list default="true" id="c12c565c-c163-42fb-aba0-1f974f5423c3" name="Changes" comment="hw add a db module" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -47,23 +43,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.0" />
-      <entry key="S60" value="1.0" />
-      <entry key="M2" value="1.0" />
-      <entry key="M5" value="1.0" />
-      <entry key="M10" value="1.0" />
-      <entry key="M15" value="1.0" />
-      <entry key="M30" value="1.0" />
-      <entry key="H1" value="1.0" />
-      <entry key="H2" value="1.0" />
-      <entry key="H4" value="1.0" />
-      <entry key="D1" value="1.0" />
-      <entry key="W1" value="1.0" />
+      <entry key="MS100" value="1.0238625391586995" />
+      <entry key="MS500" value="1.5817521901128542" />
+      <entry key="S2" value="2.4144398721556355" />
+      <entry key="S5" value="3.0501343657898174" />
+      <entry key="S10" value="3.8392610027160763" />
+      <entry key="S30" value="5.017713649515744" />
+      <entry key="S60" value="5.465225448524813" />
+      <entry key="M2" value="5.720666019937513" />
+      <entry key="M5" value="5.885254739207062" />
+      <entry key="M10" value="5.94211287313925" />
+      <entry key="M15" value="5.961293300835824" />
+      <entry key="M30" value="5.980588770757305" />
+      <entry key="H1" value="5.9902798704699" />
+      <entry key="H2" value="5.9951363008681895" />
+      <entry key="H4" value="5.997567241136494" />
+      <entry key="D1" value="5.999594413838123" />
+      <entry key="W1" value="5.999942056024632" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -85,23 +81,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9659363289248455" />
-      <entry key="MS500" value="0.9930924954370359" />
-      <entry key="S2" value="0.9982686325973925" />
-      <entry key="S5" value="0.9993070929904525" />
-      <entry key="S10" value="0.9996534864594093" />
-      <entry key="S30" value="0.9998844821426083" />
-      <entry key="S60" value="0.9999422394031608" />
-      <entry key="M2" value="0.9999711192845325" />
-      <entry key="M5" value="0.99998844761372" />
-      <entry key="M10" value="0.9999942237901777" />
-      <entry key="M15" value="0.9999961491897447" />
-      <entry key="M30" value="0.9999980745930187" />
-      <entry key="H1" value="0.999999037296046" />
-      <entry key="H2" value="0.9999995186479071" />
-      <entry key="H4" value="0.9999997593239246" />
-      <entry key="D1" value="0.9999999598873167" />
-      <entry key="W1" value="0.9999999942696166" />
+      <entry key="MS100" value="1.0097664218752633" />
+      <entry key="MS500" value="1.5769254522998752" />
+      <entry key="S2" value="2.4121613427181265" />
+      <entry key="S5" value="3.0488391765382405" />
+      <entry key="S10" value="3.8383629586130468" />
+      <entry key="S30" value="5.017288032038136" />
+      <entry key="S60" value="5.464988561229914" />
+      <entry key="M2" value="5.720540696127871" />
+      <entry key="M5" value="5.885202835367086" />
+      <entry key="M10" value="5.942086614655116" />
+      <entry key="M15" value="5.961275726229134" />
+      <entry key="M30" value="5.980579948770196" />
+      <entry key="H1" value="5.990275450766114" />
+      <entry key="H2" value="5.995134088833811" />
+      <entry key="H4" value="5.9975661345730655" />
+      <entry key="D1" value="5.9995942293349644" />
+      <entry key="W1" value="5.999942029665179" />
     </decayedShown>
   </component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 8.4" />
@@ -123,7 +119,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "lesson-db-module",
+    "git-widget-placeholder": "final-project",
     "last_opened_file_path": "/Users/macbook/Sites/education/devops-hw",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -160,7 +156,7 @@
       <workItem from="1783769250512" duration="656000" />
       <workItem from="1784101773113" duration="2000" />
       <workItem from="1784101809481" duration="3000" />
-      <workItem from="1784110534788" duration="4686000" />
+      <workItem from="1784110534788" duration="6055000" />
     </task>
     <task id="LOCAL-00001" summary="hw 3">
       <option name="closed" value="true" />
@@ -186,7 +182,15 @@
       <option name="project" value="LOCAL" />
       <updated>1784114984507</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="hw add a db module">
+      <option name="closed" value="true" />
+      <created>1784302668723</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1784302668723</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -207,6 +211,7 @@
     <MESSAGE value="hw-5" />
     <MESSAGE value="hw 3" />
     <MESSAGE value="hw 7" />
-    <option name="LAST_COMMIT_MESSAGE" value="hw 7" />
+    <MESSAGE value="hw add a db module" />
+    <option name="LAST_COMMIT_MESSAGE" value="hw add a db module" />
   </component>
 </project>

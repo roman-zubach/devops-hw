@@ -27,11 +27,8 @@ resources:
 env:
   DJANGO_DEBUG: "0"
   DJANGO_ALLOWED_HOSTS: "*"
-  POSTGRES_DB: "app_db"
-  POSTGRES_USER: "app_user"
-  POSTGRES_HOST: "db"
+  POSTGRES_DB: "appdb"
+  POSTGRES_USER: "dbadmin"
   POSTGRES_PORT: "5432"
 
-secrets:
-  DJANGO_SECRET_KEY: "change-me-to-a-random-secret-key"
-  POSTGRES_PASSWORD: "app_password"
+externalSecretName: "django-app-secrets"

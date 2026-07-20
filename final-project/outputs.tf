@@ -59,6 +59,12 @@ output "jenkins_port_forward" {
   value       = module.jenkins.port_forward_command
 }
 
+output "jenkins_admin_password" {
+  description = "Згенерований пароль адміністратора Jenkins (terraform output -raw jenkins_admin_password)"
+  value       = random_password.jenkins_admin.result
+  sensitive   = true
+}
+
 output "jenkins_agent_role_arn" {
   description = "IRSA-роль агента Jenkins (пуш у ECR)"
   value       = module.jenkins.agent_role_arn
@@ -120,6 +126,12 @@ output "grafana_admin_user" {
 output "grafana_port_forward" {
   description = "Команда для доступу до UI Grafana"
   value       = module.monitoring.grafana_port_forward_command
+}
+
+output "grafana_admin_password" {
+  description = "Згенерований пароль адміністратора Grafana (terraform output -raw grafana_admin_password)"
+  value       = random_password.grafana_admin.result
+  sensitive   = true
 }
 
 output "prometheus_port_forward" {

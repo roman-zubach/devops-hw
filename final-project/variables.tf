@@ -3,10 +3,3 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
-
-variable "grafana_admin_password" {
-  description = "Пароль адміністратора Grafana"
-  type        = string
-  default     = "admin123"
-  sensitive   = true
-}

@@ -48,6 +48,12 @@ variable "tagged_images_to_keep" {
   default     = 10
 }
 
+variable "allowed_principal_arns" {
+  description = "IAM ARNs granted push/pull on the repository. Empty = account root (access gated by IAM identity policies: Jenkins IRSA push, EKS node role pull)."
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   description = "Tags applied to the repository"
   type        = map(string)
