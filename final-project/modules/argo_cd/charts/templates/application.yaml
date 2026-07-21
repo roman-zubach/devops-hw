@@ -27,5 +27,5 @@ spec:
     server: {{ .destination.server | default "https://kubernetes.default.svc" }}
     namespace: {{ .destination.namespace }}
   syncPolicy:
-{{ toYaml .syncPolicy | indent 4 }}
+{{ toYaml (.syncPolicy | default (dict "automated" (dict "prune" true "selfHeal" true) "syncOptions" (list "CreateNamespace=true"))) | indent 4 }}
 {{- end }}
