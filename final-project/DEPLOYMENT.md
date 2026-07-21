@@ -53,12 +53,18 @@ git push origin main
 
 ## 4. Розгортання інфраструктури
 
-Провайдери kubernetes/helm конфігуряться з даних EKS, тож кластер піднімаємо
-першим, потім усе інше:
+Провайдери kubernetes/helm конфігуряться з даних EKS, тож мережу + кластер
+піднімаємо першими, потім усе інше.
+
+> ⚠️ У першому кроці цілимося одразу і в `module.vpc`, і в `module.eks`.
+> `-target=module.eks` наодинці створює лише VPC + підмережі (те, на що EKS
+> посилається), але **пропускає NAT Gateway, IGW і таблиці маршрутів** — і тоді
+> ноди в приватних підмережах не мають виходу в інтернет і не приєднуються до
+> кластера. `-target=module.vpc` створює мережевий модуль повністю.
 
 ```bash
 terraform init
-terraform apply -target=module.eks | tee docs/logs/01-eks.log
+terraform apply -target=module.vpc -target=module.eks | tee docs/logs/01-eks.log
 terraform apply | tee docs/logs/02-apply-full.log
 ```
 

@@ -24,7 +24,7 @@ spec:
           value: {{ .imageRepository | quote }}
       {{- end }}
   destination:
-    server: {{ .destination.server }}
+    server: {{ .destination.server | default "https://kubernetes.default.svc" }}
     namespace: {{ .destination.namespace }}
   syncPolicy:
 {{ toYaml .syncPolicy | indent 4 }}

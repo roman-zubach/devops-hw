@@ -17,9 +17,9 @@ variable "engine" {
 }
 
 variable "engine_version" {
-  description = "Версія рушія БД (наприклад 16.4 для postgres або 8.0 для mysql)"
+  description = "Версія рушія БД (наприклад 16.9 для postgres або 8.0 для mysql)"
   type        = string
-  default     = "16.4"
+  default     = "16.9"
 }
 
 variable "instance_class" {

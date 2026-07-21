@@ -7,7 +7,7 @@ variable "namespace" {
 variable "chart_version" {
   description = "Версія Helm-чарта jenkins (jenkins/jenkins)"
   type        = string
-  default     = "5.7.15"
+  default     = "5.9.40"
 }
 
 variable "admin_user" {

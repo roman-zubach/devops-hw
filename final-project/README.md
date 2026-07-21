@@ -111,10 +111,12 @@ terraform apply
 ```
 
 > **Порядок apply.** Провайдери `kubernetes`/`helm` конфігуруються з даних
-> EKS-кластера, тож при розгортанні з нуля зручно спершу підняти кластер, а
-> потім усе інше:
+> EKS-кластера, тож при розгортанні з нуля спершу піднімаємо мережу + кластер, а
+> потім усе інше. Ціль включає і `module.vpc`, і `module.eks` — інакше
+> `-target=module.eks` створить лише VPC + підмережі, але пропустить NAT/IGW/
+> маршрути, і ноди не приєднаються до кластера:
 > ```bash
-> terraform apply -target=module.eks
+> terraform apply -target=module.vpc -target=module.eks
 > terraform apply
 > ```
 

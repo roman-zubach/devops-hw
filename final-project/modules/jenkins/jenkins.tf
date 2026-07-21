@@ -80,6 +80,8 @@ resource "helm_release" "jenkins" {
   chart      = "jenkins"
   version    = var.chart_version
 
+  timeout = 900
+
   values = [
     templatefile("${path.module}/values.yaml", {
       admin_user            = var.admin_user

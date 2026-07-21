@@ -1,6 +1,7 @@
 controller:
-  adminUser: "${admin_user}"
-  adminPassword: "${admin_password}"
+  admin:
+    username: "${admin_user}"
+    password: "${admin_password}"
 
   serviceType: ClusterIP
 
@@ -13,11 +14,11 @@ controller:
       memory: "2Gi"
 
   installPlugins:
-    - kubernetes:4304.v5b_e5f2e4c9e5
-    - workflow-aggregator:608.v67378e9d3db_1
-    - git:5.7.0
-    - configuration-as-code:1932.v75cb_b_f1b_698d
-    - job-dsl:1.90
+    - kubernetes
+    - workflow-aggregator
+    - git
+    - configuration-as-code
+    - job-dsl
 
   JCasC:
     defaultConfig: true
@@ -51,3 +52,8 @@ serviceAccountAgent:
 rbac:
   create: true
   readSecrets: true
+
+persistence:
+  enabled: true
+  storageClass: "gp3"
+  size: "8Gi"

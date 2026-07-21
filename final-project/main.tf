@@ -72,7 +72,7 @@ module "rds" {
   use_aurora = false
 
   engine         = "postgres"
-  engine_version = "16.4"
+  engine_version = "16.9"
   instance_class = "db.t3.micro"
   multi_az       = false
 
